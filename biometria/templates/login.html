@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% set auth_view=true %}
+{% block title %}Entrar{% endblock %}
+{% block content %}
+<div class="auth-container">
+<p class="eyebrow">ACESSO À SUA CONTA</p><h1>Entre no Guardião</h1><p class="intro">Primeiro, seu usuário e senha.<br>Depois, confirme o rosto vinculado à conta.</p>
+<ol class="stepper" aria-label="Etapas de acesso"><li aria-current="step"><b>1</b> Usuário e senha</li><li><b>2</b> Confirmar rosto</li></ol>
+{% if request.args.get('ativada') %}<div class="notice" role="status">Senha criada. Sua biometria foi preservada. Agora entre na sua conta.</div>{% endif %}
+{% if request.args.get('cadastro') %}<div class="notice" role="status">Cadastro concluído. Entre com o usuário e a senha que você acabou de criar.</div>{% endif %}
+<form class="panel login-card" id="credentials-form">
+<label for="login">Usuário</label><input id="login" name="login" required autocomplete="username" maxlength="40" autocapitalize="none" spellcheck="false" placeholder="Ex.: rodrigo.reis" autofocus>
+<label for="password">Senha</label><div class="password-input"><input id="password" name="password" type="password" required maxlength="128" autocomplete="current-password"><button type="button" class="text-button password-toggle" data-target="password" aria-label="Mostrar senha" aria-pressed="false">Mostrar</button></div>
+<button class="full" id="submit-button" type="submit">Continuar para confirmação facial</button>
+<p id="form-message" class="form-message" role="status" tabindex="-1" hidden></p>
+<details class="help-details"><summary>Esqueci minha senha</summary><p>Peça ao responsável pelo sistema para redefinir sua senha no computador do servidor. Seu rosto continuará vinculado ao mesmo usuário.</p></details>
+</form>
+{% if setup_pending %}<div class="onboarding-note"><strong>Primeira vez neste computador?</strong><p>Configure o participante responsável pelo sistema antes de entrar.</p><a href="/configurar" class="text-link">Criar a conta do ministro →</a></div>{% endif %}
+{% if legacy_accounts %}<div class="onboarding-note"><strong>Já tinha um rosto cadastrado na versão anterior?</strong><p>Crie sua senha usando o mesmo usuário e confirme sua biometria.</p><a href="/ativar-conta" class="text-link">Ativar minha conta existente →</a></div>{% endif %}
+<p class="auth-footnote">Um rosto por usuário. Uma conta por pessoa.</p>
+</div>{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% set auth_view=true %}
+{% block title %}Confirmar rosto{% endblock %}
+{% block content %}
+<div class="face-auth-container"><ol class="stepper" aria-label="Etapas de acesso"><li class="complete"><b>✓</b> Usuário e senha</li><li aria-current="step"><b>2</b> Confirmar rosto</li></ol>
+<div class="page-heading"><div><p class="eyebrow">FALTA SÓ MAIS UMA ETAPA</p><h1>Confirme que é você</h1><p>O rosto precisa corresponder ao usuário informado.</p></div></div>
+<form id="login-form" class="two-columns">
+<div class="panel">{% set photo_count=1 %}{% include 'capture.html' %}</div>
+<section class="panel form-panel"><div class="identity-card"><span class="profile-avatar" aria-hidden="true">{{ identity.name[0]|upper }}</span><div><strong>{{ identity.name }}</strong><span>Usuário: {{ identity.login }}</span></div></div>
+<h2>Esta é a sua conta?</h2><p class="hint">Ative a câmera e capture uma foto, ou selecione um arquivo. O acesso só será liberado quando o rosto for confirmado.</p>
+<button type="submit" class="full" id="submit-button" disabled>Confirmar rosto e entrar</button><p id="form-message" class="form-message" role="status" tabindex="-1" hidden></p>
+<button id="cancel-login" type="button" class="text-button full">Voltar e trocar de usuário</button>
+<div class="divider"></div><p class="hint">Você tem até 5 minutos para concluir esta etapa. A foto será usada apenas para a comparação, sem ser salva.</p><p class="hint">Demonstração acadêmica sem prova de vida. Arquivos e fotos de telas podem ser aceitos.</p>
+</section></form></div>{% endblock %}

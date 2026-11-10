@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atualização para Python 3.14</title>
+<style>
+:root{--bg:#f6f7f5;--fg:#1d2420;--muted:#5b655f;--card:#fff;--line:#d9ded9;--accent:#1f7a4d;--old:#a33a2b;--code:#eef1ee}
+@media (prefers-color-scheme:dark){:root{--bg:#141815;--fg:#e6ebe7;--muted:#9aa59e;--card:#1c211d;--line:#2d352f;--accent:#4cc38a;--old:#e0806f;--code:#232a25}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:860px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:1.9rem;margin:0 0 4px}
+h2{font-size:1.25rem;margin:40px 0 12px}
+p{margin:8px 0}
+.sub{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:12px 0}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:.95rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--code);font-weight:600}
+tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font:.9em ui-monospace,Consolas,monospace}
+.old{color:var(--old)}.new{color:var(--accent);font-weight:600}
+.ok{color:var(--accent);font-weight:600}
+ul{padding-left:20px}
+</style>
+</head>
+<body>
+<main>
+<h1>Atualização para Python 3.14</h1>
+<p class="sub">Guardião 2 · dependências, instaladores e validação · 10/11/2026</p>
+
+<div class="card">
+<strong>Resumo.</strong> O projeto foi escrito para o Python 3.12 e não instalava no 3.14, porque o NumPy 2.2.6 e o Pillow 11.3 não têm pacote pronto (wheel) para essa versão. Atualizei as versões, ajustei os instaladores e a verificação de versão, e conferi tudo com os testes do projeto. <strong>Nenhuma linha da aplicação em <code>biometria/</code> foi alterada.</strong> Nenhuma regra de acesso, de autenticação ou do reconhecimento facial mudou.
+</div>
+
+<h2>1. Dependências</h2>
+<div class="scroll"><table>
+<tr><th>Pacote</th><th>Antes</th><th>Agora</th><th>Por quê</th></tr>
+<tr><td>Flask</td><td class="old">3.1.2</td><td class="new">3.1.3</td><td>Correção de manutenção da mesma série.</td></tr>
+<tr><td>Werkzeug</td><td class="old">3.1.8</td><td class="new">3.1.9</td><td>Mesma série. É ele que gera o hash scrypt das senhas.</td></tr>
+<tr><td>opencv-python-headless</td><td class="old">4.12.0.88</td><td class="new">4.13.0.92</td><td>O 4.12 exige NumPy abaixo de 2.3, e essas versões do NumPy não existem para o 3.14. O 4.13 funciona com NumPy 2.3.</td></tr>
+<tr><td>numpy</td><td class="old">2.2.6</td><td class="new">2.3.5</td><td>A primeira série do NumPy com wheel para o Python 3.14.</td></tr>
+<tr><td>Pillow</td><td class="old">11.3.0</td><td class="new">12.0.0</td><td>A primeira série do Pillow com wheel para o Python 3.14.</td></tr>
+<tr><td>waitress</td><td>3.0.2</td><td>3.0.2</td><td>Sem mudança; já funcionava.</td></tr>
+<tr><td>pytest (só desenvolvimento)</td><td class="old">8.4.2</td><td class="new">9.2.0</td><td>Ver a seção 3.</td></tr>
+</table></div>
+
+<h3>Por que não usei a versão mais nova de tudo</h3>
+<p>Existe o OpenCV 5.0, mas ele troca o motor das redes neurais (DNN) e emite avisos na inicialização. Fiquei na série 4.x, que é a mesma geração usada e validada no projeto. Com o 4.13 o aviso não aparece.</p>
+
+<h2>2. Arquivos alterados</h2>
+<div class="scroll"><table>
+<tr><th>Arquivo</th><th>O que mudou</th></tr>
+<tr><td><code>requirements.txt</code></td><td>Novas versões da tabela acima.</td></tr>
+<tr><td><code>requirements-dev.txt</code></td><td>pytest 9.2.0.</td></tr>
+<tr><td><code>instalar.bat</code></td><td><code>py -3.12</code> virou <code>py -3.14</code>, na checagem, na criação do venv e na mensagem de erro.</td></tr>
+<tr><td><code>verificar.py</code></td><td>A faixa aceita de Python passou de 3.10–3.13 para 3.10–3.14. Antes ele recusava o 3.14. A mensagem agora recomenda o 3.14.</td></tr>
+<tr><td><code>README.md</code></td><td>Instruções de instalação (Windows e Linux/macOS) e linha da tabela de problemas citam o Python 3.14.</td></tr>
+<tr><td><code>docs/VALIDACAO.md</code></td><td>Seção nova com o resultado desta rodada.</td></tr>
+<tr><td><code>docs/ATUALIZACAO_PYTHON_314.html</code></td><td>Este documento.</td></tr>
+</table></div>
+
+<h2>3. O que cada mudança faz</h2>
+<ul>
+<li><strong>Versões do <code>requirements.txt</code>:</strong> é a lista que o <code>instalar.bat</code> manda o pip instalar no venv. Com as versões antigas, o pip tentava compilar o NumPy no 3.14 e falhava. Com as novas, ele baixa pacotes prontos.</li>
+<li><strong><code>instalar.bat</code>:</strong> cria o ambiente isolado <code>.venv</code> chamando o Python pelo Launcher (<code>py</code>). Agora pede a versão 3.14. Quem tiver só o 3.12 precisa ajustar de volta, ou instalar o 3.14.</li>
+<li><strong><code>verificar.py</code>:</strong> é o diagnóstico que o instalador roda no final. Ele checa a versão do Python, carrega os dois modelos ONNX e testa uma imagem sem rosto. O limite de versão superior era 3.13, por isso falharia no 3.14 mesmo com tudo instalado.</li>
+<li><strong>pytest 9.2.0:</strong> com o pytest 8.4.2 no Windows, dois testes de "imagem inválida" falhavam. Um dos parâmetros do teste é uma sequência de 5 MB de "x", e o pytest copia o nome do teste para uma variável de ambiente. O Windows limita esse valor a 32.767 caracteres. A falha acontece no teste, não na aplicação, e não aparecia na validação original porque ela foi rodada em Linux. O pytest 9.2.0 não tem o problema.</li>
+</ul>
+
+<h2>4. Resultado dos testes</h2>
+<p>Ambiente: Windows 11, Python 3.14.5, instalação limpa num venv novo, <code>pip check</code> sem conflitos.</p>
+<div class="scroll"><table>
+<tr><th>Verificação</th><th>Resultado</th></tr>
+<tr><td><code>baixar_modelos.py</code></td><td class="ok">SHA-256 dos dois modelos confere</td></tr>
+<tr><td><code>verificar.py</code></td><td class="ok">"Dependências e modelos OK" no Python 3.14</td></tr>
+<tr><td><code>pytest</code> sem imagens</td><td class="ok">48 aprovados, 2 ignorados (esperado, precisam de fotos)</td></tr>
+<tr><td><code>pytest</code> com <code>GUARDIAO_TEST_FACES</code></td><td class="ok">50 aprovados, 0 ignorados, 0 falhas — inclui inferência real do YuNet/SFace e o fluxo completo de cadastro e login em duas etapas</td></tr>
+<tr><td>Servidor (<code>run.py</code>)</td><td class="ok">Sobe sem avisos. <code>/entrar</code>, <code>/boletins</code>, <code>/configurar</code> e os arquivos estáticos respondem 200; <code>/painel</code> e <code>/gabinete</code> redirecionam ao login; <code>/api/records/6</code> devolve 403; a consulta pública devolve só os 3 registros de nível 1</td></tr>
+</table></div>
+
+<h2>5. Limites desta validação</h2>
+<ul>
+<li>As imagens usadas nos 2 testes de inferência real foram as duas amostras públicas citadas no <code>VALIDACAO.md</code> (Lena, do OpenCV, e astronaut, do scikit-image). Elas confirmam que o motor roda e distingue duas pessoas, mas não medem precisão em pessoas reais.</li>
+<li>Não foram testados: webcam, a interface no navegador (layout e JavaScript) e a execução real dos arquivos <code>.bat</code>. Só o texto dos <code>.bat</code> foi alterado.</li>
+<li>Os bancos <code>instance/</code> existentes não são afetados. As versões novas leem o mesmo SQLite e os mesmos vetores faciais.</li>
+<li>Quem quiser continuar no Python 3.12 pode, mas precisa usar as versões antigas do <code>requirements.txt</code> e reverter o <code>instalar.bat</code>.</li>
+</ul>
+</main>
+</body>
+</html>

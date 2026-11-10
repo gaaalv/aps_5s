@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block title %}Usuários e rostos{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ADMINISTRAÇÃO</p><h1>Usuários e rostos</h1><p>Cada usuário possui uma senha e um único rosto vinculado.</p></div><a href="/usuarios/novo" class="button">Cadastrar usuário</a></div>
+{% if request.args.get('cadastro') %}<div class="notice" role="status">Cadastro concluído. O participante já pode entrar usando a senha e o próprio rosto.</div>{% endif %}
+<section class="panel user-section"><div class="section-heading"><h2>Participantes cadastrados</h2><span class="hint">O mesmo rosto não pode ter dois usuários.</span></div><div id="user-list" class="table-wrap" aria-live="polite">Carregando participantes…</div></section>
+<details class="help-details"><summary>Como redefinir uma senha?</summary><p>No computador do servidor, o responsável pode executar <code>python redefinir_senha.py usuario</code>. O rosto é preservado e as sessões anteriores são encerradas.</p></details>
+<dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">Excluir este usuário?</h2><p id="delete-description"></p><p class="hint">O cadastro, a biometria e as sessões serão removidos. Para voltar, a pessoa precisará ser cadastrada novamente.</p><div class="dialog-actions"><button class="secondary" id="cancel-delete" type="button">Manter cadastro</button><button class="danger-button" id="confirm-delete" type="button">Excluir usuário e rosto</button></div><p id="delete-message" role="status" hidden></p></dialog>
+{% endblock %}

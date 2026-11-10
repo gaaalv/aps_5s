@@ -1,0 +1,13 @@
+<section class="capture" data-max="{{ photo_count }}" aria-label="Captura de fotos">
+  <div class="camera-stage">
+    <video id="camera" autoplay playsinline muted hidden aria-label="Prévia da câmera"></video>
+    <div id="camera-placeholder"><span class="viewfinder" aria-hidden="true"></span><h3>Vamos capturar seu rosto</h3><p>Ative a câmera para começar.</p></div>
+    <span class="camera-label">CAPTURA FACIAL</span>
+  </div>
+  <div class="camera-actions"><button type="button" id="start-camera" class="secondary">Ativar câmera</button><button type="button" id="take-photo" disabled>Capturar foto</button><button type="button" id="stop-camera" class="text-button" hidden>Desligar</button></div>
+  <div class="upload-row"><label class="file-label" for="photo-files">Selecionar {{ 'fotos' if photo_count>1 else 'foto' }}</label><input id="photo-files" type="file" accept="image/jpeg,image/png" {% if photo_count>1 %}multiple{% endif %}><span>JPG ou PNG · até 5 MB por foto</span></div>
+  <div class="sample-heading"><span id="photo-count">0 de {{ photo_count }} foto(s)</span><button type="button" class="text-button" id="clear-photos">Limpar</button></div>
+  <div id="samples" class="samples" aria-live="polite"></div>
+  <p class="hint">{% if photo_count>1 %}Faça três capturas diferentes da mesma pessoa, com pequenas variações de posição. {% endif %}Mantenha o rosto inteiro, de frente, com boa iluminação e sem outras pessoas no enquadramento.</p>
+  <p id="capture-error" class="form-message error" role="alert" hidden></p>
+</section>

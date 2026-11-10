@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mapa do repositório Guardião 2</title>
+<style>
+:root{--bg:#f4f7f6;--fg:#172321;--muted:#58686a;--card:#fff;--line:#d8e2e0;--accent:#006b55;--code:#e9efed;--tag:#dff1ea}
+@media (prefers-color-scheme:dark){:root{--bg:#121816;--fg:#e4ecea;--muted:#9bacaa;--card:#1a2220;--line:#2b3633;--accent:#4cc9a0;--code:#222c29;--tag:#1f3a32}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:900px;margin:0 auto;padding:32px 16px 72px}
+h1{font-size:1.9rem;margin:0 0 6px}
+h2{font-size:1.3rem;margin:44px 0 6px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+h3{font-size:1.05rem;margin:28px 0 4px;color:var(--muted)}
+p{margin:8px 0}
+.lead{color:var(--muted)}
+code{background:var(--code);padding:1px 6px;border-radius:5px;font:.88em ui-monospace,Consolas,monospace}
+.file{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:12px 0}
+.file>h4{margin:0 0 8px;font-size:1rem}
+.file>h4 code{background:var(--tag);color:var(--accent);font-size:.95rem;font-weight:700}
+.file dl{margin:0}
+.file dt{font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent);margin-top:10px}
+.file dd{margin:2px 0 0}
+.file ul,.file ol{margin:4px 0;padding-left:22px}
+.file li{margin:3px 0}
+.flow{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px 14px 40px}
+.flow li{margin:6px 0}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.nav a{background:var(--tag);color:var(--accent);text-decoration:none;font-weight:600;font-size:.9rem;padding:4px 12px;border-radius:999px}
+</style>
+</head>
+<body>
+<main>
+<h1>Mapa do repositório Guardião 2</h1>
+<p class="lead">Em resumo, o navegador conversa por JSON com o Flask, o Flask usa o motor facial e o SQLite, e o motor facial usa os dois modelos ONNX.</p>
+<nav class="nav" aria-label="Seções">
+<a href="#raiz">Raiz</a><a href="#app">biometria/</a><a href="#templates">templates</a><a href="#static">static</a><a href="#models">models</a><a href="#tests">tests</a><a href="#docs">docs</a><a href="#instance">instance</a><a href="#login">Fluxo do login</a>
+</nav>
+
+<h2 id="raiz">Raiz do projeto</h2>
+
+<div class="file"><h4><code>run.py</code></h4><dl>
+<dt>Função</dt><dd>Ponto de entrada do servidor.</dd>
+<dt>Como funciona</dt><dd><ol>
+<li>Lê <code>--port</code> e <code>--host</code>. O padrão é 127.0.0.1, só o próprio computador.</li>
+<li>Chama <code>create_app()</code>.</li>
+<li>Gera um código de configuração de uso único, se ainda não existe ministro.</li>
+<li>Gera um código de ativação, se há contas antigas sem senha.</li>
+<li>Imprime os códigos no terminal.</li>
+<li>Sobe o servidor Waitress com 4 threads.</li></ol></dd>
+<dt>Conexões</dt><dd>Importa <code>create_app</code> e <code>issue_setup_code</code> de <code>biometria/__init__.py</code> e <code>issue_activation_code</code> de <code>biometria/auth.py</code>. É chamado por <code>iniciar.bat</code>.</dd></dl></div>
+
+<div class="file"><h4><code>instalar.bat</code></h4><dl>
+<dt>Função</dt><dd>Instalador para Windows.</dd>
+<dt>Como funciona</dt><dd>Confere se o <code>py -3.14</code> existe, cria o <code>.venv</code>, instala o <code>requirements.txt</code> e roda <code>baixar_modelos.py</code> e <code>verificar.py</code>.</dd>
+<dt>Conexões</dt><dd>Usa <code>requirements.txt</code>, <code>baixar_modelos.py</code> e <code>verificar.py</code>.</dd></dl></div>
+
+<div class="file"><h4><code>iniciar.bat</code></h4><dl>
+<dt>Função</dt><dd>Atalho para subir o servidor.</dd>
+<dt>Como funciona</dt><dd>Confere se o <code>.venv</code> existe e roda <code>run.py</code> com o Python dele.</dd>
+<dt>Conexões</dt><dd>Depende do <code>instalar.bat</code> ter rodado antes.</dd></dl></div>
+
+<div class="file"><h4><code>baixar_modelos.py</code></h4><dl>
+<dt>Função</dt><dd>Garante que os dois modelos ONNX estão íntegros.</dd>
+<dt>Como funciona</dt><dd>Compara o SHA-256 de cada arquivo em <code>models/</code>. Se falta algum, baixa do OpenCV Zoo, confere o hash e só então instala. Se o hash diverge, falha em vez de aceitar um modelo diferente.</dd>
+<dt>Conexões</dt><dd>Lê e escreve em <code>models/</code>. É chamado por <code>instalar.bat</code>.</dd></dl></div>
+
+<div class="file"><h4><code>verificar.py</code></h4><dl>
+<dt>Função</dt><dd>Diagnóstico sem cadastrar ninguém.</dd>
+<dt>Como funciona</dt><dd>Confere a versão do Python, carrega o <code>FaceEngine</code> e passa uma imagem em branco, que deve dar "Nenhum rosto".</dd>
+<dt>Conexões</dt><dd>Importa <code>FaceEngine</code> de <code>biometria/face.py</code>. É chamado por <code>instalar.bat</code>.</dd></dl></div>
+
+<div class="file"><h4><code>redefinir_senha.py</code></h4><dl>
+<dt>Função</dt><dd>Redefinição local de senha, sem e-mail.</dd>
+<dt>Como funciona</dt><dd>Pede a nova senha duas vezes, grava o hash scrypt e apaga as sessões e as etapas faciais pendentes daquele usuário. O rosto é preservado.</dd>
+<dt>Conexões</dt><dd>Usa <code>create_app</code> e <code>get_db</code>/<code>audit</code> de <code>db.py</code>. Mexe no mesmo SQLite do servidor.</dd></dl></div>
+
+<div class="file"><h4><code>requirements.txt</code></h4><dl>
+<dt>Função</dt><dd>Dependências de execução: Flask, Werkzeug, OpenCV, NumPy, Pillow e waitress.</dd>
+<dt>Conexões</dt><dd>Lido pelo <code>instalar.bat</code> e pelo pip.</dd></dl></div>
+
+<div class="file"><h4><code>requirements-dev.txt</code></h4><dl>
+<dt>Função</dt><dd>Inclui o <code>requirements.txt</code> e acrescenta o pytest.</dd></dl></div>
+
+<div class="file"><h4><code>.gitignore</code></h4><dl>
+<dt>Função</dt><dd>Ignora <code>.venv/</code>, <code>instance/</code> (banco e chave), <code>__pycache__/</code>, <code>.pytest_cache/</code>, <code>*.pyc</code>, <code>*.download</code> e <code>qa_inputs/</code>.</dd>
+<dt>Observação</dt><dd>O banco com biometria nunca vai para o git.</dd></dl></div>
+
+<div class="file"><h4><code>README.md</code></h4><dl>
+<dt>Função</dt><dd>Guia de instalação, uso, segurança e problemas comuns.</dd></dl></div>
+
+<div class="file"><h4><code>ATUALIZAR.md</code></h4><dl>
+<dt>Função</dt><dd>Passo a passo para migrar da v1 sem perder os rostos.</dd>
+<dt>Conexões</dt><dd>Descreve o que <code>db.py</code> (migração) e <code>auth.py</code> (ativação) fazem.</dd></dl></div>
+
+<h2 id="app"><code>biometria/</code> (a aplicação)</h2>
+
+<div class="file"><h4><code>__init__.py</code></h4><dl>
+<dt>Função</dt><dd>É o centro do sistema. Contém a fábrica <code>create_app</code> e quase todas as rotas.</dd>
+<dt>Como funciona</dt><dd><ul>
+<li><strong>Configuração:</strong> usa o diretório <code>instance/</code>, ou o que <code>GUARDIAO_DATA</code> indicar. Cria a <code>secret.key</code> na primeira vez e define cookies HttpOnly e SameSite=Strict, sessão de 20 minutos e limiar facial de 0,50 (<code>GUARDIAO_THRESHOLD</code>). Cria o <code>FaceEngine</code>, que falha ao iniciar se faltar modelo, e roda <code>init_db()</code>.</li>
+<li><strong><code>before_request</code>:</strong> gera o token CSRF e o exige em POST, PATCH, PUT e DELETE. Nas rotas de login, setup e ativação aplica o limite de 10 tentativas por minuto por endereço, gravado no banco.</li>
+<li><strong><code>after_request</code>:</strong> coloca cabeçalhos de segurança (CSP, nosniff, no-store, entre outros).</li>
+<li><strong>Páginas:</strong> <code>/entrar</code>, <code>/confirmar-rosto</code>, <code>/ativar-conta</code>, <code>/configurar</code>, <code>/painel</code>, <code>/boletins</code>, <code>/investigacoes</code> (nível 2), <code>/gabinete</code> (nível 3), <code>/usuarios</code>, <code>/usuarios/novo</code> e <code>/auditoria</code> (nível 3).</li>
+<li><strong>API:</strong> <code>/api/state</code>; <code>/api/records</code> (filtrado por nível no SQL); <code>/api/records/&lt;id&gt;</code> (revalida o nível e registra na auditoria); <code>/api/setup</code>, que cria o ministro; <code>/api/users</code>, com POST, GET, PATCH (ativar ou desativar) e DELETE; <code>/api/audit</code>.</li>
+<li><strong>Cadastro (<code>enrollment</code>):</strong> exige consentimento, valida nome e usuário, valida a senha, extrai 3 vetores faciais e confere que as fotos são da mesma pessoa. Dentro de <code>BEGIN IMMEDIATE</code>, confere o código de setup, o usuário duplicado e o rosto duplicado contra todas as amostras, inclusive de contas inativas. Só então grava usuário, amostras e auditoria.</li>
+<li><strong>Tratamento de erros:</strong> <code>FaceError</code> vira 422 e erros inesperados viram 500 com a mensagem genérica.</li></ul></dd>
+<dt>Conexões</dt><dd>Importa <code>db.py</code>, <code>face.py</code> e <code>auth.py</code>. Chama <code>register_auth(app, extract_uploads)</code> para pendurar as rotas de login. Renderiza os templates e fornece a API que o <code>app.js</code> consome.</dd></dl></div>
+
+<div class="file"><h4><code>auth.py</code></h4><dl>
+<dt>Função</dt><dd>Senha, etapa facial, sessão e autorização.</dd>
+<dt>Como funciona</dt><dd><ul>
+<li><strong><code>password_step</code> (<code>/api/auth/password</code>):</strong> confere o hash scrypt. Para usuário inexistente verifica contra um hash falso, para o tempo de resposta ser parecido. Se der certo, cria uma <code>face_challenge</code> (5 min, 5 tentativas) e guarda só o hash do token no banco.</li>
+<li><strong><code>face_step</code> (<code>/api/login</code>):</strong> conta a tentativa antes de rodar a inferência e compara a foto com todos os cadastros ativos (<code>matched_identity</code>). Só aceita se o melhor rosto for o da conta da senha, com similaridade de pelo menos 0,50 e margem de 0,08 sobre o segundo colocado. Se aceitar, consome a etapa, cria a sessão de 20 minutos e registra a auditoria.</li>
+<li><strong><code>current_user</code>:</strong> a cada requisição busca a sessão no banco pelo hash do token e checa se expirou e se o usuário está ativo e com senha. O nível vem do banco, nunca do cookie.</li>
+<li><strong><code>require_level(n)</code>:</strong> decorator que devolve 401 (API) ou redireciona ao login, e devolve 403 se o nível for insuficiente.</li>
+<li><strong><code>activate_legacy_account</code>:</strong> ativação de contas da v1. Exige o código do terminal e o rosto já cadastrado.</li>
+<li><strong>Logout e cancelamento:</strong> apagam o token no servidor.</li></ul></dd>
+<dt>Conexões</dt><dd>Usa <code>db.py</code> (<code>get_db</code>, <code>candidates</code>, <code>audit</code>) e <code>face.py</code> (<code>rank_candidates</code>). Quem passa <code>extract_uploads</code> é o <code>__init__.py</code>.</dd></dl></div>
+
+<div class="file"><h4><code>face.py</code></h4><dl>
+<dt>Função</dt><dd>Transforma uma imagem em um vetor facial.</dd>
+<dt>Como funciona</dt><dd><ol>
+<li>Valida o arquivo: até 5 MB, JPEG ou PNG, até 16 megapixels, e protege contra <em>decompression bomb</em>.</li>
+<li>Corrige a orientação EXIF e reduz para 1280 px.</li>
+<li>O YuNet detecta rostos. Exige exatamente um, com pelo menos 70 px, sem corte, com luz entre 35 e 235 e nitidez mínima.</li>
+<li>O SFace alinha o rosto e gera 128 valores, que são normalizados.</li></ol>
+<p><code>rank_candidates</code> compara por produto escalar. A nota de cada pessoa é a maior entre as amostras dela. Uma trava (<code>Lock</code>) protege as inferências simultâneas.</p></dd>
+<dt>Conexões</dt><dd>Lê <code>models/yunet.onnx</code> e <code>models/sface.onnx</code>. É usado por <code>__init__.py</code>, <code>auth.py</code> e <code>verificar.py</code>.</dd></dl></div>
+
+<div class="file"><h4><code>db.py</code></h4><dl>
+<dt>Função</dt><dd>Esquema SQLite, migração e consultas comuns.</dd>
+<dt>Tabelas</dt><dd><ul>
+<li><code>users</code> e <code>samples</code> (vetores).</li>
+<li><code>records</code> (os 6 documentos fictícios).</li>
+<li><code>sessions</code> e <code>face_challenges</code>.</li>
+<li><code>audit</code>, <code>attempts</code> e <code>settings</code>.</li></ul></dd>
+<dt>Como funciona</dt><dd><ul>
+<li><strong>Integridade:</strong> um índice parcial garante um único ministro. A exclusão de usuário apaga em cascata amostras, sessões e etapas.</li>
+<li><strong>Migração (<code>init_db</code>):</strong> é aditiva. Adiciona <code>password_hash</code> se faltar e, na primeira vez, apaga as sessões antigas. Também insere os registros iniciais se a tabela estiver vazia.</li>
+<li><strong><code>candidates()</code>:</strong> devolve só usuários ativos com seus vetores.</li>
+<li><strong><code>audit()</code>:</strong> grava o evento e limpa as sessões vencidas.</li></ul></dd>
+<dt>Conexões</dt><dd>Usado por <code>__init__.py</code>, <code>auth.py</code> e <code>redefinir_senha.py</code>.</dd></dl></div>
+
+<h3 id="templates"><code>biometria/templates/</code> (páginas, renderizadas pelo Flask)</h3>
+<div class="file"><dl>
+<dt>Arquivos</dt><dd><ul>
+<li><code>base.html</code>: layout comum. A barra lateral é montada no servidor conforme o nível do usuário. Também carrega <code>style.css</code> e <code>app.js</code> e coloca o token CSRF numa <code>&lt;meta&gt;</code>.</li>
+<li><code>login.html</code>: passo 1 (usuário e senha). Mostra os avisos de primeiro uso e de ativação de conta antiga.</li>
+<li><code>face_login.html</code>: passo 2. Mostra qual conta precisa ser confirmada e inclui <code>capture.html</code> com 1 foto.</li>
+<li><code>enroll.html</code>: cadastro em 2 passos (dados e senha, depois fotos). Serve para criar o ministro (<code>initial</code>) e para o ministro cadastrar usuários. Inclui <code>capture.html</code> com 3 fotos.</li>
+<li><code>capture.html</code>: bloco reutilizável com a câmera, a seleção de arquivos e as miniaturas. O <code>data-max</code> define quantas fotos são necessárias. É incluído por <code>face_login</code>, <code>enroll</code> e <code>activate</code>.</li>
+<li><code>activate.html</code>: ativação de contas da v1. Pede usuário, código, nova senha e 1 foto.</li>
+<li><code>dashboard.html</code>: "Minha área", com cartões conforme o nível.</li>
+<li><code>documents.html</code>: página única dos documentos. Serve boletins, investigações e gabinete, variando por <code>section_level</code>. O <code>app.js</code> preenche a lista.</li>
+<li><code>users.html</code>: tabela de participantes e janela de confirmação de exclusão.</li>
+<li><code>audit.html</code>: histórico dos últimos 200 eventos.</li>
+<li><code>error.html</code>: página de erro.</li></ul></dd></dl></div>
+
+<h3 id="static"><code>biometria/static/</code></h3>
+<div class="file"><h4><code>app.js</code></h4><dl>
+<dt>Função</dt><dd>Toda a lógica do navegador, em JS puro.</dd>
+<dt>Como funciona</dt><dd>Envia o token CSRF em cada <code>fetch</code> e gerencia a câmera (<code>getUserMedia</code>), as fotos na memória da aba e o fluxo do cadastro em 2 passos. Envia os formulários para <code>/api/auth/password</code>, <code>/api/login</code>, <code>/api/setup</code>, <code>/api/users</code> e <code>/api/activate</code>. Monta a lista de documentos, a tabela de usuários (ativar, desativar e excluir) e o histórico. Consulta <code>/api/state</code> a cada 15 segundos para tirar a pessoa de uma tela restrita quando a sessão expira.</dd>
+<dt>Conexões</dt><dd>Chama as rotas de <code>__init__.py</code> e <code>auth.py</code>. Os IDs dos elementos vêm dos templates.</dd></dl></div>
+<div class="file"><h4><code>style.css</code></h4><dl>
+<dt>Função</dt><dd>Estilo visual: barra lateral, formulários, tabelas, diálogos e etapas. Tem 12 linhas, minificadas, e foi lido só o começo.</dd></dl></div>
+
+<h2 id="models"><code>models/</code></h2>
+<div class="file"><dl>
+<dt>Arquivos</dt><dd><ul>
+<li><code>yunet.onnx</code>: rede que detecta onde está o rosto e os pontos de referência (olhos, nariz e boca).</li>
+<li><code>sface.onnx</code>: rede que transforma o rosto alinhado em um vetor de 128 números.</li>
+<li><code>LICENSE-YuNet.txt</code> e <code>LICENSE-SFace.txt</code>: licenças MIT e Apache 2.0.</li>
+<li><code>README.md</code>: origem, tamanho e SHA-256 dos modelos.</li></ul></dd>
+<dt>Conexões</dt><dd>Carregados por <code>face.py</code> e verificados por <code>baixar_modelos.py</code>.</dd></dl></div>
+
+<h2 id="tests"><code>tests/</code></h2>
+
+<div class="file"><h4><code>test_system.py</code></h4><dl>
+<dt>Função</dt><dd>Testa a autorização e o cadastro usando um <code>ControlledEngine</code>, um motor falso. A primeira letra da foto define o vetor, o que torna os resultados previsíveis.</dd>
+<dt>Cobertura</dt><dd>A matriz de permissões, CSRF, o setup único, rosto duplicado, desativação e exclusão, expiração e logout, e o limite de tentativas.</dd>
+<dt>Observação</dt><dd>A fixture <code>app</code> e as funções <code>setup</code>, <code>login</code> e <code>post</code> daqui são reaproveitadas pelo outro teste.</dd></dl></div>
+
+<div class="file"><h4><code>test_password_flow.py</code></h4><dl>
+<dt>Função</dt><dd>Testa as duas provas obrigatórias (senha e rosto), a etapa de 5 tentativas e a migração da v1 para a v2. Importa as fixtures de <code>test_system.py</code>.</dd></dl></div>
+
+<div class="file"><h4><code>test_face.py</code></h4><dl>
+<dt>Função</dt><dd>Testa o motor real com os modelos ONNX: arquivos inválidos, formato, tamanho e imagem sem rosto. Com <code>GUARDIAO_TEST_FACES</code> testa também a similaridade entre duas pessoas e a detecção de dois rostos na mesma imagem.</dd></dl></div>
+
+<div class="file"><h4><code>test_real_flow.py</code></h4><dl>
+<dt>Função</dt><dd>Fluxo HTTP completo com inferência real, só roda com <code>GUARDIAO_TEST_FACES</code>. Cobre o setup do ministro, o login, o cadastro de um diretor, o novo login e o bloqueio do nível 3.</dd></dl></div>
+
+<h2 id="docs"><code>docs/</code></h2>
+<div class="file"><dl>
+<dt>Arquivos</dt><dd><ul>
+<li><code>ARQUITETURA.md</code>: fluxos, tabelas, decisões e relação com o enunciado da APS.</li>
+<li><code>VALIDACAO.md</code>: resultado dos testes e limites da validação. Ganhou a seção do Python 3.14.</li>
+<li><code>ROTEIRO_DE_APRESENTACAO.md</code>: passos para demonstrar o sistema em sala.</li>
+<li><code>ATUALIZACAO_PYTHON_314.html</code>: documento da atualização para o Python 3.14.</li>
+<li><code>MAPA_DO_REPOSITORIO.html</code>: este arquivo.</li></ul></dd></dl></div>
+
+<h2 id="instance"><code>instance/</code> (criada na execução, ignorada pelo git)</h2>
+<div class="file"><dl>
+<dt>Arquivos</dt><dd><ul>
+<li><code>guardiao.sqlite3</code>: banco com usuários, vetores, sessões e auditoria.</li>
+<li><code>secret.key</code>: chave que assina os cookies.</li></ul></dd>
+<dt>Observação</dt><dd>Os vetores são dados biométricos e não ficam cifrados.</dd></dl></div>
+
+<h2 id="login">Como as peças se encaixam no login</h2>
+<ol class="flow">
+<li>O navegador envia usuário e senha. O <code>app.js</code> chama <code>auth.py</code> (<code>password_step</code>), que cria a etapa facial no <code>db.py</code>.</li>
+<li><code>face_login.html</code> e o <code>capture.html</code> pegam a foto, e o <code>app.js</code> envia para <code>/api/login</code>.</li>
+<li><code>face_step</code> chama <code>extract_uploads</code>, que vem do <code>__init__.py</code>. Ela usa o <code>face.py</code>, que roda os dois modelos de <code>models/</code>.</li>
+<li><code>matched_identity</code> compara o vetor com <code>candidates()</code>, vindos do SQLite.</li>
+<li>Se a conta da senha for a que casou, nasce a sessão. Nas próximas páginas, o <code>require_level</code> lê o nível do banco e libera ou bloqueia.</li>
+</ol>
+</main>
+</body>
+</html>

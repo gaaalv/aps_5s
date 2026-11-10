@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}{{ section_title }}{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">INFORMAÇÕES AMBIENTAIS · NÍVEL {{ section_level }}</p><h1>{{ section_title }}</h1><p>{{ section_description }}</p></div><span class="pill">{{ 'Acesso público' if section_level==1 else 'Acesso restrito' }}</span></div>
+<section class="panel records-panel"><div class="section-heading"><div><h2>Documentos desta área</h2><p class="hint" id="record-count">Carregando registros…</p></div><div class="filters"><label class="sr-only" for="search">Buscar por título ou região</label><input type="search" id="search" placeholder="Buscar por título ou região"></div></div><div id="records" data-level="{{ section_level }}" aria-live="polite"></div></section>
+<dialog id="record-dialog" aria-labelledby="detail-title"><div class="dialog-top"><span class="eyebrow" id="detail-level"></span><button type="button" id="close-dialog" class="secondary">Fechar</button></div><h2 id="detail-title"></h2><p id="detail-region" class="hint"></p><p id="detail-body" class="detail-body"></p><p class="hint">Todos os dados deste documento são fictícios.</p></dialog>
+{% endblock %}

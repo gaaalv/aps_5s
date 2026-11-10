@@ -1,0 +1,24 @@
+{% extends 'base.html' %}{% set auth_view=initial %}
+{% block title %}{{ 'Criar conta do ministro' if initial else 'Cadastrar usuário' }}{% endblock %}
+{% block content %}
+<div class="enrollment-container"><a class="text-link back-link" href="{{ '/entrar' if initial else '/usuarios' }}">← {{ 'Voltar ao login' if initial else 'Voltar aos usuários' }}</a>
+<div class="page-heading"><div><p class="eyebrow">{{ 'CONFIGURAÇÃO INICIAL' if initial else 'ADMINISTRAÇÃO' }}</p><h1>{{ 'Crie a conta do ministro' if initial else 'Cadastre um usuário' }}</h1><p>Primeiro, os dados de acesso. Depois, vincule o rosto da pessoa.</p></div></div>
+<ol class="stepper" id="enroll-stepper" aria-label="Etapas do cadastro"><li aria-current="step"><b>1</b> Dados e senha</li><li><b>2</b> Vincular rosto</li></ol>
+<form id="enroll-form" data-initial="{{ 'yes' if initial else 'no' }}" novalidate>
+<section class="panel form-panel wizard-details" id="enroll-details"><h2>Dados da conta</h2>
+{% if initial %}<label for="setup-code">Código de configuração</label><input id="setup-code" name="setup_code" type="password" required autocomplete="off"><p class="hint">Use o código exibido no terminal ao iniciar o servidor.</p>{% endif %}
+<label for="name">Nome completo</label><input id="name" name="name" required minlength="3" maxlength="80" autocomplete="name" placeholder="Nome do participante">
+<label for="login">Usuário</label><input id="login" name="login" required minlength="3" maxlength="40" pattern="[a-z0-9][a-z0-9._\-]{2,39}" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Ex.: rodrigo.reis"><p class="hint">Use letras minúsculas sem acento, números, ponto, hífen ou sublinhado.</p>
+<label for="password">Senha</label><div class="password-input"><input id="password" name="password" type="password" required minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="password-hint"><button type="button" class="text-button password-toggle" data-target="password" aria-pressed="false">Mostrar</button></div><p class="hint" id="password-hint">De 8 a 128 caracteres. A pessoa usará esta senha em cada acesso.</p>
+<label for="password-confirm">Confirmar senha</label><input id="password-confirm" name="password_confirm" type="password" required minlength="8" maxlength="128" autocomplete="new-password">
+{% if initial %}<div class="role-summary"><strong>Ministro · Nível 3</strong><span>Todos os conteúdos, gestão de usuários e histórico.</span></div>
+{% else %}<label for="level">Perfil de acesso</label><select id="level" name="level"><option value="1">Servidor · Nível 1</option><option value="2">Diretor de divisão · Nível 2</option></select><p class="hint" id="role-help">Menu com boletins públicos.</p>{% endif %}
+<button type="button" class="full" id="enroll-next">Continuar para vincular o rosto</button><p class="form-message error" id="details-message" role="alert" hidden></p>
+</section>
+<div class="two-columns" id="enroll-biometrics" hidden>
+<div class="panel">{% set photo_count=3 %}{% include 'capture.html' %}</div>
+<section class="panel form-panel"><p class="eyebrow">VÍNCULO BIOMÉTRICO</p><h2>Este rosto pertencerá a:</h2><div class="enrollment-summary"><strong id="summary-name"></strong><span id="summary-login"></span><span id="summary-role"></span></div><button type="button" id="enroll-back" class="text-button">Editar dados da conta</button>
+<p class="hint">Faça três capturas diferentes da mesma pessoa. O sistema compara as fotos e verifica se esse rosto já está cadastrado.</p>
+<label class="consent"><input type="checkbox" name="consent" value="yes" required><span>A pessoa autoriza o uso de sua biometria nesta demonstração acadêmica.</span></label>
+<button type="submit" class="full" id="submit-button" disabled>Criar usuário e vincular rosto</button><p id="form-message" class="form-message" role="status" tabindex="-1" hidden></p>
+</section></div></form></div>{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% set auth_view=true %}
+{% block title %}Ativar conta existente{% endblock %}
+{% block content %}<div class="enrollment-container"><a href="/entrar" class="text-link back-link">← Voltar ao login</a><div class="page-heading"><div><p class="eyebrow">ATUALIZAÇÃO DE CONTA</p><h1>Crie sua senha de acesso</h1><p>Seu rosto já está cadastrado. Confirme-o para vincular uma senha ao mesmo usuário.</p></div></div>
+<form id="activation-form" class="two-columns"><section class="panel form-panel"><h2>Seu cadastro existente</h2><label for="login">Usuário</label><input id="login" name="login" required maxlength="40" autocomplete="username" autocapitalize="none" spellcheck="false">
+<label for="activation-code">Código de ativação</label><input id="activation-code" name="activation_code" type="password" required autocomplete="off"><p class="hint">Peça ao responsável o código de ativação exibido no terminal do servidor.</p>
+<label for="password">Nova senha</label><div class="password-input"><input id="password" name="password" type="password" required minlength="8" maxlength="128" autocomplete="new-password"><button type="button" class="text-button password-toggle" data-target="password" aria-pressed="false">Mostrar</button></div><p class="hint">Use de 8 a 128 caracteres.</p>
+<label for="password-confirm">Confirmar nova senha</label><input id="password-confirm" name="password_confirm" type="password" required minlength="8" maxlength="128" autocomplete="new-password">
+<button type="submit" class="full" id="submit-button" disabled>Confirmar meu rosto e criar senha</button><p id="form-message" class="form-message" role="status" tabindex="-1" hidden></p></section>
+<section class="panel">{% set photo_count=1 %}{% include 'capture.html' %}</section></form></div>{% endblock %}

@@ -1,0 +1,3 @@
+{% extends 'base.html' %}
+{% block title %}Acesso indisponível{% endblock %}
+{% block content %}<section class="panel error-page"><p class="eyebrow">{{ code }}</p><h1>Não foi possível continuar</h1><p>{{ message }}</p><a class="button" href="/">Voltar ao painel</a><a class="text-link" href="/entrar">Autenticar meu rosto</a></section>{% endblock %}

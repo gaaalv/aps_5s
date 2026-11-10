@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Minha área{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">{{ {1:'SERVIDOR',2:'DIRETORIA DE DIVISÃO',3:'GABINETE DO MINISTRO'}[user.level] }} · NÍVEL {{ user.level }}</p><h1>Olá, {{ user.name.split()[0] }}.</h1><p>Escolha uma área para começar. As opções abaixo acompanham o seu perfil.</p></div><span class="pill">Senha e rosto confirmados</span></div>
+<section class="destination-grid" aria-label="Suas áreas de acesso">
+<a class="destination-card" href="/boletins"><span class="eyebrow">NÍVEL 01</span><h2>Boletins públicos</h2><p>Consulte orientações e informações de monitoramento ambiental.</p><span class="destination-action">Abrir boletins <span aria-hidden="true">→</span></span></a>
+{% if user.level>=2 %}<a class="destination-card" href="/investigacoes"><span class="eyebrow">NÍVEL 02</span><h2>Investigações</h2><p>Acompanhe os dossiês de propriedades e ocorrências ambientais.</p><span class="destination-action">Abrir investigações <span aria-hidden="true">→</span></span></a>{% endif %}
+{% if user.level==3 %}<a class="destination-card cabinet-card" href="/gabinete"><span class="eyebrow">NÍVEL 03</span><h2>Gabinete do ministro</h2><p>Acesse as diretrizes e informações estratégicas do gabinete.</p><span class="destination-action">Abrir gabinete <span aria-hidden="true">→</span></span></a>{% endif %}
+</section>
+{% if user.level==3 %}<section class="admin-shortcuts"><div><h2>Administração</h2><p class="hint">Gerencie as contas e acompanhe o uso do sistema.</p></div><a class="secondary button" href="/usuarios">Usuários e rostos</a><a class="secondary button" href="/auditoria">Histórico de acesso</a></section>{% endif %}
+<div class="access-summary"><strong>Seu acesso: nível {{ user.level }}</strong><p>{{ {1:'Você pode consultar todos os boletins públicos.',2:'Você pode consultar boletins públicos e investigações das diretorias.',3:'Você pode consultar todos os conteúdos e administrar os participantes.'}[user.level] }}</p></div>
+{% endblock %}
